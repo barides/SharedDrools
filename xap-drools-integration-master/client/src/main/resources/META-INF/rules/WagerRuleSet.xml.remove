@@ -2,9 +2,8 @@
 <change-set xmlns='http://drools.org/drools-5.0/change-set'
             xmlns:xs='http://www.w3.org/2001/XMLSchema-instance'
             xs:schemaLocation='http://drools.org/drools-5.0 change-set.xsd'>
-    <add>
-        <resource source='classpath:META-INF/rules/drl/Wager/CheckWagerRule.drl' type='DRL'/> 
-        <resource source='classpath:META-INF/rules/drl/Wager/CheckWagerRule2.drl' type='DRL'/> 
-    </add>
+    <remove>
+        <resource source='classpath:META-INF/rules/drl/Wager/CheckWagerRule3.drl' type='DRL'/> 
+    </remove>
     
 </change-set>

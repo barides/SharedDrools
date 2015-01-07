@@ -112,6 +112,8 @@ public class DroolsRulesLoader {
 	                    if(xmlRemove != null) {
 	                    	removeRule(xmlRemove, droolsRuleRemoveEventList, ruleSetMapEntry);
 	                    }
+	                    
+	                    
 	                }else {
 	                    log.error("Error reading XML file (" + ruleSetMapEntry.getValue() + "), skipping...");
 	                }
@@ -237,11 +239,18 @@ public class DroolsRulesLoader {
     private String parseRuleName(String source) {
     	String begin = "rule ";
     	String end = "when";
-    	
     	int beginIndex = source.indexOf(begin);
     	int endIndex = source.indexOf(end);
     	
-    	return source.substring(beginIndex+6, endIndex-3);
+    	String ruleName = source.substring(beginIndex, endIndex);
+    	StringTokenizer tokens = new StringTokenizer(ruleName);
+    	tokens.nextToken();
+    	String name = tokens.nextToken();
+    	// remove the Apostrophes (") from rule name
+    	String[] nameArray = name.split("\"");
+    	name = nameArray[1];
+    	log.info("Rule name " + name );
+    	return name;
     }
     
     private String parseKnowledgePackageName(String source) {

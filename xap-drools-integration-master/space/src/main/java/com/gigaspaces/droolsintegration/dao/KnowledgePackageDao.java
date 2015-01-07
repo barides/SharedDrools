@@ -47,4 +47,13 @@ public class KnowledgePackageDao {
 												 .decrement("totalRules" , 1));
 	}
 	
+	public void updateRule(KnowledgePackage knowledgePackage, String ruleName, DroolsRule rule) {
+		IdQuery<KnowledgePackage> idQuery = new IdQuery<KnowledgePackage>(KnowledgePackage.class, knowledgePackage.getId(), knowledgePackage.getRuleSet());
+		gigaSpace.change(idQuery, new ChangeSet().removeFromMap("rules", ruleName)
+												 .decrement("totalRules" , 1));
+		gigaSpace.change(idQuery, new ChangeSet().set("lastUpdateDate", new Date(System.currentTimeMillis()))
+				 .putInMap("rules", ruleName, rule)
+				 .increment("totalRules" , 1));
+	}
+	
 }

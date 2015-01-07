@@ -44,7 +44,7 @@ public class WagerFactPollingContainer extends BaseFactPollingContainer{
     
 	private static Logger log = Logger.getLogger(WagerFactPollingContainer.class);
 	
-	public static final String RULE_SET_VOUCHER = "VoucherSet";
+	public static final String RULE_SET_VOUCHER = "WagerSet";
     
 	@PostConstruct
 	public void init() {

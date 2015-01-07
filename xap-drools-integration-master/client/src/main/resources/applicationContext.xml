@@ -38,7 +38,7 @@
     <bean id="ruleSets" class="java.util.HashMap">
         <constructor-arg>
             <map>
-            	<entry key="VoucherSet" value="META-INF/rules/VoucherRuleSet.xml"/>
+            	<entry key="WagerSet" value="META-INF/rules/WagerRuleSet.xml"/>
             </map>
         </constructor-arg>
     </bean>
