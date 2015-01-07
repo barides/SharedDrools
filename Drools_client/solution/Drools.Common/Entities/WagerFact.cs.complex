@@ -1,0 +1,50 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using GigaSpaces.Core.Metadata;
+
+namespace BillBuddy.Common.Entities
+{
+    [SpaceClass(AliasName = "com.c123.demo.model.facts.WagerFact")]
+    [Serializable]
+    public class WagerFact
+    {
+
+        public WagerFact() { }
+
+        [SpaceID(AutoGenerate = false)]
+        [SpaceProperty(AliasName = "id")]
+        public string Id { get; set; }
+        
+        [SpaceRouting]
+        [SpaceProperty(AliasName = "networkId")]
+        public int? NetworkId { get; set; }
+
+        [SpaceProperty(AliasName = "customerId")]
+        public int? CustomerId { get; set; }
+
+        [SpaceProperty(AliasName = "actualAmount")]
+        public double? ActualAmount { get; set; }
+
+        [SpaceProperty(AliasName = "state")]
+        public FactsState? State { get; set; }
+
+        [SpaceProperty(AliasName = "correlationID")]
+        public string CorrelationID { get; set; }
+
+        [SpaceProperty(AliasName = "skinId")]
+        public int? SkinId { get; set; }
+
+        [SpaceProperty(AliasName = "date")]
+        public DateTime? Date { get; set; }
+
+        [SpaceProperty(StorageType = StorageType.Object, AliasName = "action")]
+        public AdjustmentAction Action { get; set; }
+        
+        public override string ToString()
+        {
+            return "WagerFact (Id=" + Id + ",NetworkId=" + NetworkId + ",CustomerId=" + CustomerId + ",ActualAmount=" + ActualAmount + ",State=" + State + ",Date=" + Date.ToString() + ",Action=" + Action + ")";
+        }
+    }
+}

@@ -1,0 +1,16 @@
+package Game
+
+import com.c123.demo.model.facts.*;
+
+rule "CheckVoucherRule"
+when
+	wagerFact : WagerFact( actualAmount > 100, action.(actionState == 0) )
+then
+	System.out.println("Customer: " + wagerFact.getCustomerId() + " has lost more then 100 " + wagerFact.getActualAmount());
+	AdjustmentAction action = new AdjustmentAction();
+	action.setAmount(wagerFact.getActualAmount()*0.1);
+	action.setUpdateBalanceReason(28);
+	action.setActionState(1);
+	wagerFact.setAction(action);
+	update(wagerFact);
+end

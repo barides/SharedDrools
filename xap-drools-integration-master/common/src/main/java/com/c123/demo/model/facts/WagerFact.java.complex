@@ -1,0 +1,123 @@
+package com.c123.demo.model.facts;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashMap;
+
+import com.gigaspaces.annotation.pojo.SpaceClass;
+import com.gigaspaces.annotation.pojo.SpaceId;
+import com.gigaspaces.annotation.pojo.SpaceProperty;
+import com.gigaspaces.annotation.pojo.SpaceRouting;
+import com.gigaspaces.annotation.pojo.SpaceStorageType;
+import com.gigaspaces.metadata.StorageType;
+
+
+@SpaceClass
+public class WagerFact implements Serializable {
+	private static final long serialVersionUID = 2654430594192018801L;
+
+	private String id; 
+    private Integer customerId;
+    private Date date;
+    private Double actualAmount;
+	private String correlationID;
+    private Integer networkId;
+    private Integer skinId;
+    private AdjustmentAction action;
+
+	private Integer state;
+    
+	public WagerFact() {
+		state = 0;
+		action = new AdjustmentAction();
+		
+	}
+    
+	@SpaceId(autoGenerate = false)
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Integer getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(Integer customerId) {
+		this.customerId = customerId;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public Double getActualAmount() {
+		return actualAmount;
+	}
+
+	public void setActualAmount(Double actualAmount) {
+		this.actualAmount = actualAmount;
+	}
+
+	public String getCorrelationID() {
+		return correlationID;
+	}
+
+	public void setCorrelationID(String correlationID) {
+		this.correlationID = correlationID;
+	}
+
+	@SpaceRouting
+	public Integer getNetworkId() {
+		return networkId;
+	}
+
+	public void setNetworkId(Integer networkId) {
+		this.networkId = networkId;
+	}
+
+	public Integer getSkinId() {
+		return skinId;
+	}
+
+	public void setSkinId(Integer skinId) {
+		this.skinId = skinId;
+	}
+
+	
+	@SpaceStorageType(storageType=StorageType.OBJECT)
+	public AdjustmentAction getAction() {
+		return action;
+	}
+
+	public void setAction(AdjustmentAction action) {
+		this.action = action;
+	}
+
+	public Integer getState() {
+		return state;
+	}
+
+	public void setState(Integer state) {
+		this.state = state;
+	}
+
+
+	@Override
+	public String toString() {
+		return "WagerFact [id=" + id + ", customerId=" + customerId + ", date="
+				+ date + ", actualAmount=" + actualAmount + ", correlationID="
+				+ correlationID + ", networkId=" + networkId + ", skinId="
+				+ skinId + ", action=" + action + ", state=" + state + "]";
+	}
+
+	
+
+}

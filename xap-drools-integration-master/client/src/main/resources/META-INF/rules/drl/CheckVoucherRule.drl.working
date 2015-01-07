@@ -1,0 +1,37 @@
+package Game
+
+import com.c123.demo.real.*;
+import com.c123.demo.real.aggregation.*;
+
+rule "CheckVoucherRuleProviderTwo"
+when
+	$wagerFact : WagerFactContainer( fact.actualAmount > 100 , fact.skinId ==1 , fact.state==0 )  
+then  
+	System.out.println("Drools Customer: " + $wagerFact.getFact().getCustomerId() + " has bet more then 100 and skin is 1" );
+	System.out.println("Drools Test Customer from gigaspaces: " + $wagerFact.getCustomer().getName() );
+	System.out.println("Drools Test getHourlyCount from gigaspaces: " + $wagerFact.getHourlyCount() );
+	System.out.println("Drools Test getHourlySum from gigaspaces: " + $wagerFact.getHourlySum() );
+	GenericAction $action = new GenericAction();
+	$action.setUpdateBalanceReason(28);
+	$action.setAmount($wagerFact.getFact().getActualAmount().multiply( new java.math.BigDecimal(0.1d)) );
+	$action.setState(2);
+	$action.setFact($wagerFact.getFact()); 
+	$action.setActionType((Integer) $wagerFact.getFact().getDocumentProperties().getProperty("Zone"));
+	insert($action);
+end
+
+rule "CheckVoucherRuleProviderOne"
+when
+	$wagerFact : WagerFactContainer( fact.actualAmount > 100 , fact.skinId ==2 , fact.state==0 )  
+then  
+	System.out.println("Drools Customer: " + $wagerFact.getFact().getCustomerId() + " has bet more then 100 and skin is 1" );
+	System.out.println("Drools Test Customer from gigaspaces: " + $wagerFact.getCustomer().getName() );
+	System.out.println("Drools Test getHourlyCount from gigaspaces: " + $wagerFact.getHourlyCount() );
+	System.out.println("Drools Test getHourlySum from gigaspaces: " + $wagerFact.getHourlySum() );	GenericAction $action = new GenericAction();
+	$action.setUpdateBalanceReason(28);
+	$action.setAmount($wagerFact.getFact().getActualAmount().multiply( new java.math.BigDecimal(0.1d)) );
+	$action.setState(2);
+	$action.setFact($wagerFact.getFact()); 
+	$action.setActionType(2);
+	insert($action);
+end

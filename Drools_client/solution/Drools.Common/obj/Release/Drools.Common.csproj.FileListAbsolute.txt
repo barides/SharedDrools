@@ -1,0 +1,16 @@
+C:\_XapNET_Trainee\Labs\Drools_client\solution\Drools.Common\bin\Release\Drools.Common.dll
+C:\_XapNET_Trainee\Labs\Drools_client\solution\Drools.Common\bin\Release\Drools.Common.pdb
+C:\_XapNET_Trainee\Labs\Drools_client\solution\Drools.Common\bin\Release\GigaSpaces.Core.dll
+C:\_XapNET_Trainee\Labs\Drools_client\solution\Drools.Common\bin\Release\GigaSpaces.NetToJava.dll
+C:\_XapNET_Trainee\Labs\Drools_client\solution\Drools.Common\bin\Release\GigaSpaces.Core.xml
+C:\_XapNET_Trainee\Labs\Drools_client\solution\Drools.Common\obj\Release\Drools.Common.dll
+C:\_XapNET_Trainee\Labs\Drools_client\solution\Drools.Common\obj\Release\Drools.Common.pdb
+C:\_XapNET_Trainee\Labs\Drools_client\solution\Drools.Common\obj\Release\Drools.Common.csprojResolveAssemblyReference.cache
+C:\Users\AndroidDev\Documents\GitHub\DroolsNETIntegrarion\Drools_client\solution\Drools.Common\bin\Release\Drools.Common.dll
+C:\Users\AndroidDev\Documents\GitHub\DroolsNETIntegrarion\Drools_client\solution\Drools.Common\bin\Release\Drools.Common.pdb
+C:\Users\AndroidDev\Documents\GitHub\DroolsNETIntegrarion\Drools_client\solution\Drools.Common\bin\Release\GigaSpaces.Core.dll
+C:\Users\AndroidDev\Documents\GitHub\DroolsNETIntegrarion\Drools_client\solution\Drools.Common\bin\Release\GigaSpaces.NetToJava.dll
+C:\Users\AndroidDev\Documents\GitHub\DroolsNETIntegrarion\Drools_client\solution\Drools.Common\bin\Release\GigaSpaces.Core.xml
+C:\Users\AndroidDev\Documents\GitHub\DroolsNETIntegrarion\Drools_client\solution\Drools.Common\obj\Release\Drools.Common.csprojResolveAssemblyReference.cache
+C:\Users\AndroidDev\Documents\GitHub\DroolsNETIntegrarion\Drools_client\solution\Drools.Common\obj\Release\Drools.Common.dll
+C:\Users\AndroidDev\Documents\GitHub\DroolsNETIntegrarion\Drools_client\solution\Drools.Common\obj\Release\Drools.Common.pdb

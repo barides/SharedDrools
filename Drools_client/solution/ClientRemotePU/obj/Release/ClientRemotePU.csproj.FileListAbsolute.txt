@@ -1,0 +1,12 @@
+C:\_XapNET_Trainee\Labs\Drools_client\solution\ClientRemotePU\obj\Release\ClientRemotePU.csprojResolveAssemblyReference.cache
+C:\_XapNET_Trainee\Labs\Drools_client\Deploy\client.remote.pu\pu.config
+C:\_XapNET_Trainee\Labs\Drools_client\Deploy\client.remote.pu\ClientRemotePU.dll
+C:\_XapNET_Trainee\Labs\Drools_client\Deploy\client.remote.pu\ClientRemotePU.pdb
+C:\_XapNET_Trainee\Labs\Drools_client\solution\ClientRemotePU\obj\Release\ClientRemotePU.dll
+C:\_XapNET_Trainee\Labs\Drools_client\solution\ClientRemotePU\obj\Release\ClientRemotePU.pdb
+C:\Users\AndroidDev\Documents\GitHub\DroolsNETIntegrarion\Drools_client\Deploy\client.remote.pu\pu.config
+C:\Users\AndroidDev\Documents\GitHub\DroolsNETIntegrarion\Drools_client\Deploy\client.remote.pu\ClientRemotePU.dll
+C:\Users\AndroidDev\Documents\GitHub\DroolsNETIntegrarion\Drools_client\Deploy\client.remote.pu\ClientRemotePU.pdb
+C:\Users\AndroidDev\Documents\GitHub\DroolsNETIntegrarion\Drools_client\solution\ClientRemotePU\obj\Release\ClientRemotePU.csprojResolveAssemblyReference.cache
+C:\Users\AndroidDev\Documents\GitHub\DroolsNETIntegrarion\Drools_client\solution\ClientRemotePU\obj\Release\ClientRemotePU.dll
+C:\Users\AndroidDev\Documents\GitHub\DroolsNETIntegrarion\Drools_client\solution\ClientRemotePU\obj\Release\ClientRemotePU.pdb
