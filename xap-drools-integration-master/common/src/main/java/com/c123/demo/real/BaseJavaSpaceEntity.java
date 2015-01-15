@@ -7,7 +7,7 @@ import com.gigaspaces.annotation.pojo.SpaceId;
 import com.gigaspaces.annotation.pojo.SpaceRouting;
 import com.gigaspaces.document.DocumentProperties;
 
-public class BaseJavaSpaceEntity implements Serializable {
+public class BaseJavaSpaceEntity implements Serializable,Identity {
 
 	private String id; 
 	private Integer routingId;

@@ -10,14 +10,16 @@ import java.util.HashSet;
 import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.log4j.Logger;
 import org.apache.openjpa.lib.log.Log;
+
 import com.c123.demo.real.BaseCustomerFact;
+import com.c123.demo.real.Identity;
 import com.c123.demo.utils.FactProcessUtilities;
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
 import com.gigaspaces.annotation.pojo.SpaceRouting;
 
 @SpaceClass(persist=true)
-public class SimpleFactAggregationContainer implements Serializable{
+public class SimpleFactAggregationContainer implements Serializable,Identity{
 	
 	private static final long serialVersionUID = -7412411044213037910L;
 	

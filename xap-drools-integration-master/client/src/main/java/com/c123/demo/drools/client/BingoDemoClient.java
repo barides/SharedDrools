@@ -27,7 +27,7 @@ public class BingoDemoClient {
 	
 	
 	private HashMap<Integer,Customer> customerRegistry;
-	private int numberOfCustomers = 10;
+	private int numberOfCustomers = 4;
 
 	@GigaSpaceContext(name = "gigaSpace")
 	private GigaSpace gigaSpace;
@@ -62,7 +62,6 @@ public class BingoDemoClient {
     }
     
     public void start(){
-    	
         Thread t = new Thread(new FactCreatorExecuter());
         t.start();
     }
@@ -117,21 +116,21 @@ public class BingoDemoClient {
 	    
 	    private void loadCustomerMetadata(){
 	    	customerRegistry = new HashMap<Integer, Customer>();
-	    	for (int i=1 ; i < numberOfCustomers ; i++) {
+	    	for (int i=1 ; i <= numberOfCustomers ; i++) {
 		    	Customer cust = new Customer();
 		    	cust.setId(GameDataGenerator.generateCustomerID());
 		    	log.info("Customer id: " + cust.getId());
 		    	cust.setAddress(i + " Testi street California USA");
 		    	cust.setMobilePhone("054-777777" + i);
 		    	cust.setName("John Stamos " + i);
-		    	cust.setNetworkId(GameDataGenerator.generateNetworkID());
+		    	cust.setNetworkId((i%2)+1);
 		    	gigaSpace.write(cust);
 		    	customerRegistry.put(cust.getId(), cust);
 	    	}
 	    }
 	    
 	    private Customer getRandomCustomer(){
-	    	int id = GameDataGenerator.generateID(9);
+	    	int id = GameDataGenerator.generateID(numberOfCustomers);
 	    	int counter=1;
 	    	for (Customer cust : customerRegistry.values()) {
 	    		if (counter == id){
@@ -139,6 +138,7 @@ public class BingoDemoClient {
 	    		}
 	    		counter++;
 	    	}
+	    	log.info("id is:" + id);
 	    	return null;
 	    }
 	    

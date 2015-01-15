@@ -44,7 +44,8 @@ public class WagerFactPollingContainer extends BaseFactPollingContainer{
     
 	private static Logger log = Logger.getLogger(WagerFactPollingContainer.class);
 	
-	public static final String RULE_SET_VOUCHER = "WagerSet";
+	// public static final String RULE_SET_VOUCHER = "WagerSet";
+	public static final String PACKAGE_NAME="InstantGameWager";
     
 	@PostConstruct
 	public void init() {
@@ -79,7 +80,8 @@ public class WagerFactPollingContainer extends BaseFactPollingContainer{
        
        // log.info("fact:" + wagerFact.toString());
        // Execute Rules
-       List<Object> resultFacts = executeRules(RULE_SET_VOUCHER, facts, null);
+       
+       List<Object> resultFacts = executeRules(this.generateRuleSetNamePerNetwork(wagerFact.getNetworkId()), facts, null);
        	
        	// log.info("Results ExecuteRules Execution");
     	if (resultFacts != null ) {
@@ -90,6 +92,7 @@ public class WagerFactPollingContainer extends BaseFactPollingContainer{
 	       		if (fact.getState() > 0) {	
 	       			long end = System.currentTimeMillis();
 	       			((GenericAction) fact).setProcessTime(end-start);
+	       			((GenericAction) fact).setFact(wagerFact);
 	       			gigaSpace.write(fact);
 	       		} 
 	       	}
@@ -99,8 +102,11 @@ public class WagerFactPollingContainer extends BaseFactPollingContainer{
        	}
        	
        // log.info("End ExecuteRules Execution");
-	   wagerFact.setState(2);
-       return wagerFact;
+	   // wagerFact.setState(2);
+       // return wagerFact;
+    	
+    	//Remove fact
+    	return null;
    }
    
    private List<Object> executeRules(String ruleSet, Iterable<Object> facts,  Map<String, Object> globals) {
@@ -160,5 +166,9 @@ public class WagerFactPollingContainer extends BaseFactPollingContainer{
 	   // log.info(currentAggregation.toString());
 	   return currentAggregation;
 	   
+   }
+   
+   private String generateRuleSetNamePerNetwork(int networkid){
+	   return PACKAGE_NAME + "_" + networkid;
    }
 }

@@ -1,5 +1,6 @@
 package com.c123.demo.mirror;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import javax.annotation.PostConstruct;
@@ -94,18 +95,36 @@ public class CassandraSpaceSynchronizationEndpoint extends
 	public void onOperationsBatchSynchronization(OperationsBatchData batchData) {
 		
 		super.onOperationsBatchSynchronization(batchData);
-		// log.info("onOperationsBatchSynchronization");
+		
         DataSyncOperation[] operations = batchData.getBatchDataItems();
+        log.info("onOperationsBatchSynchronization amount of operations are: " + operations.length);
+        ArrayList<Object> storeInput = new  ArrayList<Object>();
+        ArrayList<Object> deleteInput = new  ArrayList<Object>();
         for (DataSyncOperation operation : operations) {
         	if (operation.supportsDataAsObject()) {
         		Object obj = operation.getDataAsObject();
-        		//log.info("onOperationsBatchSynchronization: " + obj.getClass().getName());
-        		//if (obj.getClass().getSimpleName().equals("Customer") ){
-        		//	 log.info("onOperationsBatchSynchronization got customer object");
-        		//}
-        		storeObject(obj);
+        		com.gigaspaces.sync.DataSyncOperationType type = operation.getDataSyncOperationType();
+        		if (operation.getDataSyncOperationType() == com.gigaspaces.sync.DataSyncOperationType.REMOVE){
+        			// removeObject(obj);
+        			deleteInput.add(obj);
+        		} else {
+        			storeInput.add(obj);
+        		}
         	}
         }
+        
+        if (deleteInput.size() > 0){
+        	log.info("onOperationsBatchSynchronization delete object count:" + deleteInput.size());
+        	removeObjects(deleteInput);
+        } else {
+        	 log.info("onOperationsBatchSynchronization no delete");
+        }
+        if (storeInput.size() > 0){
+        	log.info("onOperationsBatchSynchronization insert object count:" + storeInput.size());
+        	storeObjects(storeInput);
+        } else {
+       	 	log.info("onOperationsBatchSynchronization no insert");
+       }
 	}
 	
 	public CassandraDaoClient getDao() {
@@ -117,6 +136,33 @@ public class CassandraSpaceSynchronizationEndpoint extends
 			dao.storeObject(obj);
 		} catch(Exception ex) {
 			log.info("Faild to insert object: " + obj.toString());
+			ex.printStackTrace();
+		}
+	}
+	
+	private void storeObjects(ArrayList<Object>  objects){
+		try {
+			dao.storeObjects(objects);
+		} catch(Exception ex) {
+			log.info("Faild to insert objects!!!!");
+			ex.printStackTrace();
+		}
+	}
+	
+	private void removeObject(Object  obj){
+		try {
+			dao.removeObject(obj);
+		} catch(Exception ex) {
+			log.info("Faild to insert object: " + obj.toString());
+			ex.printStackTrace();
+		}
+	}
+	
+	private void removeObjects(ArrayList<Object>  objects){
+		try {
+			dao.removeObjects(objects);
+		} catch(Exception ex) {
+			log.info("Faild to delete objects !!!!");
 			ex.printStackTrace();
 		}
 	}

@@ -32,7 +32,7 @@ public class GameDataGenerator {
 
 	public static int generateNetworkID(){
 		Random rand = new Random();
-		int randomNum = rand.nextInt(3)+1;
+		int randomNum = rand.nextInt(2)+1;
 	    return randomNum;
 	}
 	

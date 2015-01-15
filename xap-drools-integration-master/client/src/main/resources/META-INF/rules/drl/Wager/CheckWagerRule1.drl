@@ -5,9 +5,9 @@ import com.c123.demo.real.aggregation.*;
 
 rule "CheckWagerRuleOne"
 when
-	$wagerFact : WagerFactContainer( fact.actualAmount > 100 , fact.skinId ==1 , hourlyCount > 2 , dailySum > 500)  
+	$wagerFact : WagerFactContainer( fact.actualAmount > 250 , fact.skinId ==1 , hourlyCount > 2 , dailySum > 500)  
 then  
-	System.out.println("Drools rule: CheckWagerRuleOne" );	
+	// System.out.println("Drools rule: CheckWagerRuleOne" );	
 	GenericAction $action = new GenericAction();
 	$action.setUpdateBalanceReason(28);
 	$action.setAmount($wagerFact.getFact().getActualAmount().multiply( new java.math.BigDecimal(0.1d)) );

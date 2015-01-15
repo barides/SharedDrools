@@ -44,7 +44,7 @@
 	</bean>
 
 	<os-core:mirror id="mirror" url="/./mirror-service"
-		space-sync-endpoint="cassandraSpaceSynchronizationEndpoint" >
+		space-sync-endpoint="cassandraSpaceSynchronizationEndpoint" operation-grouping="group-by-replication-bulk">
 		<os-core:source-space name="space"
 			partitions="2" backups="1" />
 	</os-core:mirror>

@@ -12,7 +12,7 @@ import com.gigaspaces.annotation.pojo.SpaceRouting;
 
 
 @SpaceClass(persist=true)
-public class GenericAction implements Serializable,Fact {
+public class GenericAction implements Serializable,Fact,Identity {
 	
 
 	private static final long serialVersionUID = -4062645554313821766L;
