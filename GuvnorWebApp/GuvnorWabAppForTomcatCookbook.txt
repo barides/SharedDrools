@@ -1,0 +1,25 @@
+1. Download Tomcat 8: http://tomcat.apache.org/download-80.cgi
+2. Open tomcat into directory
+3. Download guvnor web application: http://mvnrepository.com/artifact/org.drools/guvnor-webapp-drools/5.6.0.Final
+4. Put guvnor web application in Tomcat directory in webapp folder - change name of war file to guvnor-webapp.war
+5. Tomcat - create setenv.bat in bin folder and point to drools runtime lib (Copy from Git)
+6. Copy Lib directory for guvnor web application (Copy from Git)
+7. Add users and roles to tomcat tomcat-users.xml file (Copy from Git)
+
+  <role rolename="manager-gui"/>
+  <role rolename="manager"/>
+  <role rolename="admin"/>
+  <role rolename="manager-script"/>
+  <role rolename="admin-script"/>
+  <user username="admin" password="admin" roles="manager-gui,admin,manager,manager-script,admin-script"/>
+<user username="tomcat" password="tomcat" roles="manager-gui"/> 
+
+8. After Deployment, stop tomcat and change to web.xml (Copy from Git)
+<context-param>
+   <param-name>org.jboss.seam.transaction.disableListener</param-name>
+   <param-value>true</param-value>
+</context-param>
+9. Change repository location - webinf/beans.xml (Copy from Git)
+<s:entry><s:key>repository.root.directory</s:key><s:value>D:\Dev\drools\repository</s:value></s:entry>
+
+
