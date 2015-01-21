@@ -7,30 +7,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import org.apache.cassandra.cql.jdbc.CassandraDataSource;
 import org.apache.log4j.Logger;
 
-import com.c123.demo.real.BaseFact;
 import com.c123.demo.real.Customer;
-import com.c123.demo.real.GenericAction;
 import com.c123.demo.real.Identity;
-import com.c123.demo.real.aggregation.SimpleFactAggregationContainer;
 import com.c123.demo.utils.CassandraSerailizeStorer;
 import com.datastax.driver.core.BatchStatement;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 
 public class CassandraDaoClient {
 
 	private static Logger log = Logger.getLogger(CassandraDaoClient.class);
 	public static String TABLE_NAME= "data";
-	public String keyspace;
-	public String host;
-	public int port;
+	private String keyspace;
+	private String host;
+	private int port;
 	
+
+
 	private final static CassandraConnector client = new CassandraConnector();
 	private PreparedStatement insertPreparedStatement;
 	private PreparedStatement retireveAllObjectsStatement;
@@ -39,8 +40,7 @@ public class CassandraDaoClient {
 	private Stack<Identity> operations;
 	private Session session;
 	private boolean execute=false;
-	// private ArrayList<ActionHandler> actionHandlers = new ArrayList<ActionHandler>();
-	// private int numberOfHandlers=10;
+	private int maxBatchSize=3;
 
 	public CassandraDaoClient() {
 	}
@@ -66,15 +66,6 @@ public class CassandraDaoClient {
 		retireveAllObjectsStatement = session.prepare(cql);
 		cql = "DELETE FROM " + keyspace + "." + TABLE_NAME + " WHERE itemid = ?";
 		deleteObjectsStatement = session.prepare(cql);
-		/*
-		execute = true;
-		for (int cnt=1; cnt <= numberOfHandlers; cnt++ ) {
-			log.info("create new Thread handler for Cassandra");
-			ActionHandler handler = new ActionHandler();
-			Thread t = new Thread(handler);
-			actionHandlers.add(handler);
-		}
-		*/
 	}
 
 	protected String getCreateTableSQL() {
@@ -95,13 +86,13 @@ public class CassandraDaoClient {
 	public void removeObject(Object obj) throws IOException, SQLException{
 		if(obj instanceof Customer){
 			Customer input = (Customer) obj;
-			session.execute(deleteObjectsStatement.bind(input.getId().toString())) ;
+			this.remove(input.getId().toString()) ;
 			return;
 		}
 		
 		if(obj instanceof Identity){
 			Identity input = (Identity) obj;
-			session.execute(deleteObjectsStatement.bind(input.getId().toString())) ;
+			this.remove(input.getId());
 			return;
 		}
 		
@@ -110,40 +101,16 @@ public class CassandraDaoClient {
 	public void storeObject(Object obj) throws IOException, SQLException{
 		// log.info("storeObject: " + obj.getClass().getName());
 		if(obj instanceof Customer){
-			//log.info("storeObject Customer: " + obj.getClass().getName());
 			Customer input = (Customer) obj;
-			//log.info("storeObject Customer: " + input.getId().toString() + "," + input.getClass().getName());
 			store(input.getId().toString(), input.getClass().getName(), CassandraSerailizeStorer.serialize(obj));
 			return;
 		}
 		
 		if(obj instanceof Identity){
-			// log.info("storeObject SimpleFactAggregationContainer ");
 			Identity input = (Identity) obj;
 			store(input.getId(), input.getClass().getName(), CassandraSerailizeStorer.serialize(obj));
 			return;
 		}
-		
-		/*
-		if(obj instanceof BaseFact){
-			BaseFact input = (BaseFact) obj;
-			store(input.getId(), input.getClass().getName(), CassandraSerailizeStorer.serialize(obj));
-			return;
-		}
-		
-		if(obj instanceof GenericAction){
-			GenericAction input = (GenericAction) obj;
-			store(input.getId(), input.getClass().getName(), CassandraSerailizeStorer.serialize(obj));
-			return;
-		}
-		
-		if(obj instanceof SimpleFactAggregationContainer){
-			// log.info("storeObject SimpleFactAggregationContainer ");
-			SimpleFactAggregationContainer input = (SimpleFactAggregationContainer) obj;
-			store(input.getId(), input.getClass().getName(), CassandraSerailizeStorer.serialize(obj));
-			return;
-		}
-		*/
 		
 	}
 
@@ -154,48 +121,62 @@ public class CassandraDaoClient {
 				if(obj instanceof Customer){			
 				Customer input = (Customer) obj;
 				batch.add( deleteObjectsStatement.bind(input.getId().toString()) ); 				
-				return;
 			}
 			
 			if(obj instanceof Identity){
 				Identity input = (Identity) obj;
-				batch.add( deleteObjectsStatement.bind(input.getId().toString()) ); 
-				return;
+				log.info("delete id="+input.getId() + "," + input.getClass().getName());
+				batch.add( deleteObjectsStatement.bind(input.getId()) ); 
 			}
 		}
 		this.executeBatch(batch);
-		// log.info("batch size is " + batch.size());
 		
 	}	
 	
 	public void storeObjects(ArrayList<Object> objects) throws IOException, SQLException{
+		// log.info("storeObjects start: " + objects.size());
 		BatchStatement batch = new BatchStatement();
+		int elmentCounter=0;
 		for (Object obj :  objects){
 			if(obj instanceof Customer){
-				//log.info("storeObject Customer: " + obj.getClass().getName());
 				Customer input = (Customer) obj;
-				//log.info("storeObject Customer: " + input.getId().toString() + "," + input.getClass().getName());
 				store(input.getId().toString(), input.getClass().getName(), CassandraSerailizeStorer.serialize(obj));
-				return;
 			}
 			if(obj instanceof Identity){
-				// log.info("storeObject SimpleFactAggregationContainer ");
 				Identity input = (Identity) obj;
-				batch.add(insertPreparedStatement.bind(input.getId().toString(), input.getClass().getName(), ByteBuffer.wrap( CassandraSerailizeStorer.serialize(obj) ) ) ); 
-				return;
-			}			
+				log.info("store id="+input.getId() + "," + input.getClass().getName());
+				batch.add(insertPreparedStatement.bind(input.getId().toString(), input.getClass().getName(), ByteBuffer.wrap( CassandraSerailizeStorer.serialize(obj) ) ) );
+				elmentCounter++;
+			}	
+			if (elmentCounter>maxBatchSize){
+				this.executeBatch(batch);
+				batch = new BatchStatement();
+				elmentCounter=0;
+			}
 		}
-		this.executeBatch(batch);
+		if (elmentCounter>0){
+			this.executeBatch(batch);
+		}
+		// this.executeBatch(batch);
 		// log.info("batch size is " + batch.size());
 	}
 	
-	private void store (String id, String typeName, byte[] obj) throws SQLException, IOException {		
-		session.execute(insertPreparedStatement.bind(id, typeName, ByteBuffer.wrap( obj )));
-	}
+	
 	
 	private void executeBatch(BatchStatement batch){
-		log.info("executeBatch size " + batch.size());
-		client.getSession().execute(batch);
+		// log.info("executeBatch size " + batch.size());
+		ResultSetFuture resultSetFuture = session.executeAsync(batch);
+	    Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
+	        @Override
+	        public void onSuccess(com.datastax.driver.core.ResultSet resultSet) {
+	            // do nothing
+	        }
+
+	        @Override
+	        public void onFailure(Throwable throwable) {
+	            log.error("Failed with: %s\n", throwable);
+	        }
+	    });
 	}
 	
 	public ArrayList<Object> readObjects() throws SQLException, IOException, ClassNotFoundException {
@@ -213,29 +194,66 @@ public class CassandraDaoClient {
 	}
 	
 	private Object createObjectFromDB(Row row) throws ClassNotFoundException, IOException {
-		// String itemId = row.getString("itemid");
-		// String itemType = row.getString("item_type");
 		ByteBuffer serObject = row.getBytes("item_content");
 		byte[] readObject = new byte[serObject.remaining()];
 		serObject.get(readObject);
 		return CassandraSerailizeStorer.deserialize(readObject);
 	}
-/*
-	private class ActionHandler implements Runnable {
-		
-	    public void run() {
-	        try {
-	        	while (execute){
-		        	if ( operations.peek() != null) {
-						storeObject( operations.pop() );
-		        	} else {
-		        		Thread.sleep(10);
-		        	}
-	        	}
-	        } catch (Exception e) {
-	        	log.error("PaymentFeeder.PaymentCreatorExecuter has failed");
+	
+
+	private void store (String id, String typeName, byte[] obj) throws SQLException, IOException {		
+		ResultSetFuture resultSetFuture = session.executeAsync(insertPreparedStatement.bind(id, typeName, ByteBuffer.wrap( obj )));
+	    Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
+	        @Override
+	        public void onSuccess(com.datastax.driver.core.ResultSet resultSet) {
+	            // do nothing
 	        }
-	    }
-    }
-    */
+
+	        @Override
+	        public void onFailure(Throwable throwable) {
+	            log.error("Failed with: %s\n", throwable);
+	        }
+	    });
+	}
+	
+	private void remove (String id) throws SQLException, IOException {		
+		ResultSetFuture resultSetFuture = session.executeAsync(deleteObjectsStatement.bind(id));
+	    Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
+	        @Override
+	        public void onSuccess(com.datastax.driver.core.ResultSet resultSet) {
+	            // do nothing
+	        }
+
+	        @Override
+	        public void onFailure(Throwable throwable) {
+	            log.error("Failed with: %s\n", throwable);
+	        }
+	    });
+	}
+	
+	
+	public String getKeyspace() {
+		return keyspace;
+	}
+
+	public void setKeyspace(String keyspace) {
+		this.keyspace = keyspace;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}	
+	
 }

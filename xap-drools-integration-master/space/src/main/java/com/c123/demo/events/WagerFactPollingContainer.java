@@ -32,7 +32,7 @@ import com.gigaspaces.droolsintegration.util.IterableMapWrapper;
 
 
 @EventDriven
-@TransactionalEvent(timeout=66)
+@TransactionalEvent(timeout=80)
 @Polling(gigaSpace="gigaSpace" , concurrentConsumers = 4, maxConcurrentConsumers = 4 )
 public class WagerFactPollingContainer extends BaseFactPollingContainer{
 
@@ -94,6 +94,7 @@ public class WagerFactPollingContainer extends BaseFactPollingContainer{
 	       			((GenericAction) fact).setProcessTime(end-start);
 	       			((GenericAction) fact).setFact(wagerFact);
 	       			gigaSpace.write(fact);
+	       			// gigaSpace.write(fact,WriteModifiers.ONE_WAY);
 	       		} 
 	       	}
        	} else {
@@ -158,11 +159,9 @@ public class WagerFactPollingContainer extends BaseFactPollingContainer{
 	   } else {
 		   currentAggregation.addFactToAggregation(fact);
 		   //gigaSpace.write(currentAggregation,WriteModifiers.UPDATE_ONLY);
-		   gigaSpace.write(currentAggregation,0,100,WriteModifiers.UPDATE_ONLY);
-		   
+		   gigaSpace.write(currentAggregation,0,500,WriteModifiers.UPDATE_ONLY);
 	   }
 	   
-	   gigaSpace.write(currentAggregation);
 	   // log.info(currentAggregation.toString());
 	   return currentAggregation;
 	   

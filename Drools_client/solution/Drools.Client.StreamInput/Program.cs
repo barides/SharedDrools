@@ -26,11 +26,16 @@ namespace Drools.Client.StreamInput
                 Console.Out.WriteLine(ex.StackTrace);
                 spaceProxy = GigaSpacesFactory.FindSpace("jini://*/*/space?groups=gigaspaces-10.0.1-XAPPremium-ga");
             }
+            // Create new stopwatch
+            Stopwatch stopwatch = new Stopwatch();
 
-            int numberOfCustomers = 2000;
-            int eventPerCustomer = 20;
+
+            int numberOfCustomers = 1000;
+            int eventPerSecond = 500;
+            int eventPerCustomer = 24;
+            int emulatedCustomerID = 1;
             int maxFacts = numberOfCustomers * eventPerCustomer;
-            int delayBetweenEventBulks = 1500;
+            int delayBetweenEventBulks = 1000;
             // Load metadata
             // Customer
             Customer[] customerMetadat = new Customer[numberOfCustomers];
@@ -41,25 +46,34 @@ namespace Drools.Client.StreamInput
                 customerDictionary.Add(customerCnt, customerMetadat[customerCnt - 1]);
             }
             ILeaseContext<Customer>[] customersMetadataLease = spaceProxy.WriteMultiple<Customer>(customerMetadat);
-            Console.Out.WriteLine("Customer metadat has been written to the space");
-            Thread.Sleep(2000);
+            Console.Out.WriteLine("Customer metadata has been written to the space");
+            Thread.Sleep(3000);
 
+            GenericActionHandler handler = new GenericActionHandler();
+            handler.Initialize(spaceProxy);
             
             int counter = 1;
-            Stopwatch sw = new Stopwatch();
+
             for (int eventsCnt=1; eventsCnt <= eventPerCustomer;eventsCnt++)
             {
-                WagerFact[] bulkfacts = new WagerFact[numberOfCustomers];
-                int writeMultiple = counter + numberOfCustomers;
-                // int arrayCounter = 0;
-                // int customerIdMocker = 1;
-                sw.Restart();
-                for ( int customerCounter=1 ; customerCounter <= numberOfCustomers; customerCounter++)
+                WagerFact[] bulkfacts = new WagerFact[eventPerSecond];
+                // int writeMultiple = counter + numberOfCustomers;
+                // Begin timing
+                stopwatch.Restart();
+                for (int eventCounter = 1; eventCounter <= eventPerSecond; eventCounter++)
                 {
                     WagerFact wagerFact = new WagerFact();
                     wagerFact.ActualAmount = (decimal)DataGenerator.GenerateDoubleAmount;
                     wagerFact.CorrolationID = Guid.NewGuid();
-                    int customerId = customerCounter;
+                    if (emulatedCustomerID >= numberOfCustomers)
+                    {
+                        emulatedCustomerID = 1;
+                    }
+                    else
+                    {
+                        emulatedCustomerID++;
+                    }
+                    int customerId = emulatedCustomerID;
                     wagerFact.CustomerID = customerId;
                     wagerFact.DateTime = DateTime.Now;
                     // wagerFact.Id = i.ToString();
@@ -79,17 +93,29 @@ namespace Drools.Client.StreamInput
                     addons.Add("Zone", 4);
                     wagerFact.DocumentProperties = addons;
                     // Console.Out.WriteLine("WRITING FACT: " + wagerFact.ToString());
-                    bulkfacts[customerCounter-1] = wagerFact;
+                    bulkfacts[eventCounter-1] = wagerFact;
                     // arrayCounter++;
                     // customerIdMocker++;
                 }
-                sw.Stop();
-                Console.Out.WriteLine("generate " + numberOfCustomers + " events took " + sw.ElapsedMilliseconds + " milliseconds");
+                // Stop timing
+                stopwatch.Stop();
+                Console.WriteLine("Time elapsed: {0}.{1} Total:{2}", stopwatch.Elapsed.Seconds, stopwatch.Elapsed.Milliseconds, eventsCnt*numberOfCustomers);
                 ILeaseContext<WagerFact>[] allfacts = spaceProxy.WriteMultiple<WagerFact>(bulkfacts);
                 // counter++;
-                Thread.Sleep(delayBetweenEventBulks - Convert.ToInt16( sw.ElapsedMilliseconds ));
+                Thread.Sleep(delayBetweenEventBulks - stopwatch.Elapsed.Milliseconds);
             }
 
+
+            int timer = 0;
+            while (timer < 60)
+            {
+                Console.Out.WriteLine("Running timer before polling container is disposed for 10 sec, time passed " + timer + " sec");
+                Thread.Sleep(1000);
+                handler.IsActive();
+                timer++;
+            }
+
+            handler.stop();
             /*
             GenericActionHandler handler = new GenericActionHandler();
             handler.Initialize(spaceProxy);
@@ -105,6 +131,8 @@ namespace Drools.Client.StreamInput
 
             handler.stop();
             */
+
+
             /*
             int cnt=0;
             while (cnt < 3) {
@@ -150,11 +178,11 @@ namespace Drools.Client.StreamInput
         {
             Customer output = new Customer();
 
-            output.Id = id;
+            output.Id = id+1000000;
             output.Name = "Maor T" + id;
             output.Address = id + " test street testerville Israel";
             output.MobilePhone = "054-555666" + id;
-            output.NetworkId = DataGenerator.GenerateIntID;
+            output.NetworkId = DataGenerator.GenerateIntNetworkID;
             Console.Out.WriteLine("Customer created " + output.ToString());
             return output;
         }

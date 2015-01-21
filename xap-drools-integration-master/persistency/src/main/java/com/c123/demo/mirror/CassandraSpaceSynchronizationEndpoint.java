@@ -11,8 +11,12 @@ import org.apache.log4j.Logger;
 import org.openspaces.persistency.patterns.ManagedEntriesSpaceSynchronizationEndpoint;
 
 import com.c123.demo.real.dao.CassandraDaoClient;
+import com.gigaspaces.sync.ConsolidationParticipantData;
 import com.gigaspaces.sync.DataSyncOperation;
 import com.gigaspaces.sync.OperationsBatchData;
+import com.gigaspaces.sync.TransactionData;
+import com.gigaspaces.transaction.ConsolidatedDistributedTransactionMetaData;
+import com.gigaspaces.transaction.TransactionParticipantMetaData;
 
 public class CassandraSpaceSynchronizationEndpoint extends
 		ManagedEntriesSpaceSynchronizationEndpoint {
@@ -97,36 +101,74 @@ public class CassandraSpaceSynchronizationEndpoint extends
 		super.onOperationsBatchSynchronization(batchData);
 		
         DataSyncOperation[] operations = batchData.getBatchDataItems();
-        log.info("onOperationsBatchSynchronization amount of operations are: " + operations.length);
-        ArrayList<Object> storeInput = new  ArrayList<Object>();
-        ArrayList<Object> deleteInput = new  ArrayList<Object>();
+        // log.info("onOperationsBatchSynchronization amount of operations are: " + operations.length);
+         ArrayList<Object> storeInput = new  ArrayList<Object>();
+         ArrayList<Object> deleteInput = new  ArrayList<Object>();
         for (DataSyncOperation operation : operations) {
         	if (operation.supportsDataAsObject()) {
         		Object obj = operation.getDataAsObject();
         		com.gigaspaces.sync.DataSyncOperationType type = operation.getDataSyncOperationType();
-        		if (operation.getDataSyncOperationType() == com.gigaspaces.sync.DataSyncOperationType.REMOVE){
-        			// removeObject(obj);
-        			deleteInput.add(obj);
+        		
+        		if (operation.getDataSyncOperationType() == com.gigaspaces.sync.DataSyncOperationType.REMOVE || operation.getDataSyncOperationType() == com.gigaspaces.sync.DataSyncOperationType.REMOVE_BY_UID){
+        			this.removeObject(obj);
+        			// deleteInput.add(obj);
         		} else {
-        			storeInput.add(obj);
+        			this.storeObject(obj);
+        			// storeInput.add(obj);
         		}
         	}
         }
         
+        
+        /*
         if (deleteInput.size() > 0){
-        	log.info("onOperationsBatchSynchronization delete object count:" + deleteInput.size());
+        	// log.info("delete object count:" + deleteInput.size());
         	removeObjects(deleteInput);
         } else {
-        	 log.info("onOperationsBatchSynchronization no delete");
+        	 // log.info("No delete");
         }
         if (storeInput.size() > 0){
-        	log.info("onOperationsBatchSynchronization insert object count:" + storeInput.size());
+        	// log.info("Insert object count:" + storeInput.size());
         	storeObjects(storeInput);
         } else {
-       	 	log.info("onOperationsBatchSynchronization no insert");
-       }
+       	 	// log.info("No insert");
+        }
+        */
 	}
-	
+	/*
+    @Override
+    public void onTransactionConsolidationFailure(ConsolidationParticipantData participantData)
+    {
+      TransactionParticipantMetaData metadata = participantData.getTransactionParticipantMetadata();
+      DataSyncOperation[] operations = participantData.getTransactionParticipantDataItems();
+      for (DataSyncOperation operation : operations) {
+    	  log.info("onTransactionConsolidationFailure:" + operation.getDataAsObject().toString());
+      }
+    }
+    
+    public void onTransactionSynchronization(TransactionData transactionData) {
+        // If this is a consolidated distributed transaction print consolidation information
+        if (transactionData.isConsolidated()) {
+            ConsolidatedDistributedTransactionMetaData metaData = transactionData.getConsolidatedDistributedTransactionMetaData();
+            log.info("CONSOLIDATED TRANSACTION [id=" + metaData.getTransactionUniqueId()
+                    + ", participantsCount=" + metaData.getTransactionParticipantsCount() + "]");
+
+            // Single participant transaction
+        } else {
+            TransactionParticipantMetaData metaData = transactionData.getTransactionParticipantMetaData();
+            log.info("SINGLE PARTICIPANT TRANSACTION [id=" + metaData.getTransactionUniqueId()
+                    + ", participantId=" + metaData.getParticipantId() + "]");
+        }
+
+        // Get operations in transaction
+        DataSyncOperation[] operations = transactionData.getTransactionParticipantDataItems();
+        for (DataSyncOperation operation : operations) {
+
+        	 log.info("onTransactionSynchronization:" + operation.getDataAsObject().toString());
+
+        }
+    }
+	*/
 	public CassandraDaoClient getDao() {
 		return dao;
 	}

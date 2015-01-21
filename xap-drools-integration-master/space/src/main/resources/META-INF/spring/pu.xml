@@ -25,8 +25,36 @@
 	    </property>
 	</bean>
 
+	<bean id="supportedManageSpaceClasses" class="java.util.HashSet">
+		<constructor-arg>
+			<set>
+				<value>com.c123.demo.real.WagerFact</value>
+				<value>com.c123.demo.real.GenericAction</value>
+				<value>com.c123.demo.real.Customer</value>
+				<value>com.c123.demo.real.aggregation.SimpleFactAggregationContainer</value>
+			</set>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="cassandraSpaceDataSource" class="com.c123.demo.persistency.CassandraCustomFactoryBean" >
+	    <property name="managedEntries" ref="supportedManageSpaceClasses" />
+	    <property name="host" value="${host}" />
+	    <property name="port" value="${port}" />
+	    <property name="keyspace" value="${keyspace}" />
+	</bean>
     
-	<os-core:space id="space" url="/./space" > 
+	<os-core:space id="space" url="/./space" mirror="true" schema="persistent" space-data-source="cassandraSpaceDataSource"> 
+		<os-core:properties>
+	        <props>	            
+	        	<prop key="space-config.engine.cache_policy">1</prop>
+	            <prop key="space-config.external-data-source.usage">read-only</prop>
+	            <prop key="cluster-config.cache-loader.external-data-source">true</prop>
+	            <prop key="cluster-config.cache-loader.central-data-source">true</prop>
+            	<prop key="cluster-config.mirror-service.interval-millis">10</prop>
+            	<prop key="cluster-config.mirror-service.bulk-size">200</prop>
+            	<prop key="cluster-config.mirror-service.interval-opers">200</prop>
+	        </props>
+	    </os-core:properties>
 	</os-core:space>
 	
     <!-- Defines a distributed transaction manager -->
