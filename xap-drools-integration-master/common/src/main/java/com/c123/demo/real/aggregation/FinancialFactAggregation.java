@@ -69,5 +69,14 @@ public class FinancialFactAggregation extends BaseFactAggregation implements Ser
 				+ ", max=" + max + ", min=" + min + "]";
 	}
 
+	@Override
+	public void reset() {
+		// TODO Auto-generated method stub
+		this.count=0;
+		this.sum=0;
+		this.min=0;
+		this.max=0;
+	}
+
 
 }

@@ -1,4 +1,4 @@
-package com.c123.demo.drools.client;
+package com.c123.demo.drools.client.generators;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -17,7 +17,7 @@ import com.gigaspaces.droolsintegration.service.drools.IRulesExecutionService;
 import com.gigaspaces.droolsintegration.util.IterableMapWrapper;
 
 
-@Component
+// @Component
 public class DemoClient {
 
 	private static Logger log = Logger.getLogger(DemoClient.class);

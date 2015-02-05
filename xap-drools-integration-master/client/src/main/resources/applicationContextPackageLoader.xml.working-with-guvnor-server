@@ -13,15 +13,13 @@
 
 	<context:component-scan base-package="com.c123.demo.drools.client.loader"/>
 	
-	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-	    <property name="location">
-	        <value>loader.properties</value>
-	    </property>
+	<bean id="droolsWebServerAddress" class="java.lang.String">
+		<constructor-arg type="java.lang.String" value="http://localhost:8080/guvnor-webapp/org.drools.guvnor.Guvnor/package" />
 	</bean>
 	
 	<util:list id="loadPackageNames" value-type="java.lang.String">
-   	 	<value>InstantGameWagerComprisedNewGen_1</value>
-    	<value>InstantGameWagerComprisedNewGen_2</value>
+   	 	<value>InstantGameWagerComprised_1</value>
+    	<value>InstantGameWagerComprised_2</value>
 	</util:list>
 	
 	<!-- Enables to configure Spring beans through annotations   -->

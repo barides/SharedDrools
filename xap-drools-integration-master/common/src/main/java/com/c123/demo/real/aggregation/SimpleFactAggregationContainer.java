@@ -194,5 +194,13 @@ public class SimpleFactAggregationContainer implements Serializable,Identity{
 				+ latestRegisteredDate + ", factIds=" + factIds + "]";
 	}
 	
-	
+	public void reset(){
+		for (BaseFactAggregation agg : this.hourlyAggregationData.values()){
+			agg.reset();
+		}
+		for (BaseFactAggregation agg : this.dailyAggregationData.values()){
+			agg.reset();
+		}
+		
+	}
 }

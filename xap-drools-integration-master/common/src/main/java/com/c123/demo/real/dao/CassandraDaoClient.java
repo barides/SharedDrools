@@ -29,8 +29,6 @@ public class CassandraDaoClient {
 	private String keyspace;
 	private String host;
 	private int port;
-	
-
 
 	private final static CassandraConnector client = new CassandraConnector();
 	private PreparedStatement insertPreparedStatement;

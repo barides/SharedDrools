@@ -7,6 +7,7 @@ import com.c123.demo.real.BaseCustomerFact;
 public abstract class BaseFactAggregation implements Serializable {
 
 	public abstract void aggregate(BaseCustomerFact fact);
+	public abstract void reset();
 
 
 }

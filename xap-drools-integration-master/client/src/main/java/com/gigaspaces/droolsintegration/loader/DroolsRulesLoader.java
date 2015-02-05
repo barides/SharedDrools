@@ -20,7 +20,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import com.c123.demo.drools.client.DemoClient;
+import com.c123.demo.drools.client.generators.DemoClient;
 import com.gigaspaces.async.AsyncFuture;
 import com.gigaspaces.droolsintegration.util.RulesConstants;
 import com.gigaspaces.droolsintegration.model.drools.DroolsDslDefinition;

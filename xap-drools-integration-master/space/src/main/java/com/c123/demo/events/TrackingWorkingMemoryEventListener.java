@@ -69,19 +69,24 @@ public class TrackingWorkingMemoryEventListener extends
 		}
 	}
 
-	/*
-	 * @SuppressWarnings("unchecked")
-	 * 
-	 * public void objectUpdated(final ObjectUpdatedEvent event) { if
-	 * ((handleFilter == null && classFilter == null) || event.getFactHandle()
-	 * == handleFilter || event.getObject().getClass().equals(classFilter)) {
-	 * updates.add(event); allEvents.add(event); Object fact =
-	 * event.getObject(); try { factChanges.add(BeanUtils.describe(fact)); }
-	 * catch (Exception e) {
-	 * log.error("Unable to get object details for tracking: " +
-	 * DroolsUtil.objectDetails(fact), e); } log.trace("Update: " +
-	 * DroolsUtil.objectDetails(event.getObject())); } }
-	 */
+	public void objectUpdated(final ObjectUpdatedEvent event) {
+		if ((handleFilter == null && classFilter == null)
+				|| event.getFactHandle() == handleFilter
+				|| event.getObject().getClass().equals(classFilter)) {
+			updates.add(event);
+			allEvents.add(event);
+			// log.info("Update: " + event.getObject().toString());
+			/*
+			 * allEvents.add(event); Object fact = event.getObject(); try {
+			 * factChanges.add(BeanUtils.describe(fact)); } catch (Exception e)
+			 * { log.error("Unable to get object details for tracking: " +
+			 * DroolsUtil.objectDetails(fact), e); } log.trace("Update: " +
+			 * DroolsUtil.objectDetails(event.getObject())); }
+			 */
+		}
+
+	}
+
 	public List<WorkingMemoryEvent> getAllEvents() {
 		return allEvents;
 	}
