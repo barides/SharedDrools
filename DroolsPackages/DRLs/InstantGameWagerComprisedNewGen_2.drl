@@ -1,0 +1,64 @@
+package InstantGameWagerComprisedNewGen_2
+
+import com.c123.demo.real.*;
+import com.c123.demo.real.aggregation.*;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Calendar;
+
+rule "DepositMade"
+salience 100
+lock-on-active
+when
+    $depositFact : DepositFact() 
+	$agg : CommonAggregationContainer( )
+then 
+	// System.out.println("DepositMade");
+	// System.out.println("Before" + $agg.toString());
+    SimpleEntry<String, Object> depEntry = new SimpleEntry<String, Object>("PromotionOne/DepositMade",true);
+	$agg.put(depEntry);
+	SimpleEntry<String, Object> betEntry = new SimpleEntry<String, Object>("PromotionOne/BetsSum",new Double(0));
+	$agg.put(betEntry);
+	SimpleEntry<String, Object> bonusGivenEntry = new SimpleEntry<String, Object>("PromotionOne/BonusGiven", false);
+	$agg.put(bonusGivenEntry);
+	// System.out.println($agg.toString());
+    update($agg);
+end
+
+rule "BetsSum"
+salience 100
+lock-on-active
+when
+    $wagerFact : WagerFact() 
+	$agg : CommonAggregationContainer(  ( (Boolean) getData().get("PromotionOne/DepositMade")) != null && ( (Boolean) getData().get("PromotionOne/DepositMade")) )
+then 
+    // System.out.println("BetsSum");
+	Double current = (Double) $agg.get("PromotionOne/BetsSum");
+	SimpleEntry<String, Object> entry = new SimpleEntry<String, Object>("PromotionOne/BetsSum",current + $wagerFact.getActualAmount().doubleValue());
+	$agg.put(entry);
+	// System.out.println($agg.toString());
+	update($agg);
+end
+
+rule "Promotion"
+salience 10
+lock-on-active
+when
+	$wagerFact : WagerFact() 
+	$agg : CommonAggregationContainer( ( (Boolean) getData().get("PromotionOne/DepositMade")) != null 
+               && ( (Boolean) getData().get("PromotionOne/DepositMade")) 
+               && ( (Double) getData().get("PromotionOne/BetsSum")) != null 
+               && ( (Double) getData().get("PromotionOne/BetsSum")) > 500 
+               && ( (Boolean) getData().get("PromotionOne/BonusGiven")) != null 
+               && !( (Boolean) getData().get("PromotionOne/BonusGiven"))); 
+then  
+	// System.out.println("BusinessRuleOne");
+	GenericAction $action = new GenericAction();
+	$action.setUpdateBalanceReason(28);
+	$action.setAmount($wagerFact.getActualAmount().multiply( new java.math.BigDecimal(0.1d)) );
+	$action.setState(2);
+	$action.setFact($wagerFact); 
+	$action.setActionType(22);
+	insert($action);
+	SimpleEntry<String, Object> entry = new SimpleEntry<String, Object>("PromotionOne/BonusGiven",true);
+	$agg.put((SimpleEntry<String, Object>) entry);
+end
