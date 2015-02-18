@@ -13,10 +13,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
-import org.drools.event.rule.ObjectInsertedEvent;
-import org.drools.event.rule.ObjectUpdatedEvent;
-import org.drools.event.rule.WorkingMemoryEvent;
-import org.drools.runtime.StatelessKnowledgeSession;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.events.EventDriven;
 import org.openspaces.events.EventTemplate;

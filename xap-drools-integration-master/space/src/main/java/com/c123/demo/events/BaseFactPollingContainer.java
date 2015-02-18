@@ -12,9 +12,9 @@ import net.jini.core.lease.LeaseDeniedException;
 import net.jini.core.lease.UnknownLeaseException;
 
 import org.apache.log4j.Logger;
-import org.drools.event.rule.ObjectInsertedEvent;
-import org.drools.event.rule.ObjectUpdatedEvent;
-import org.drools.runtime.StatelessKnowledgeSession;
+import org.kie.api.event.rule.ObjectInsertedEvent;
+import org.kie.api.event.rule.ObjectUpdatedEvent;
+import org.kie.api.runtime.StatelessKieSession;
 import org.openspaces.core.GigaSpace;
 
 import com.c123.demo.model.facts.Fact;
@@ -34,14 +34,14 @@ public class BaseFactPollingContainer {
 			.getLogger(BaseFactPollingContainer.class);
 
 	protected void executeRules(String ruleSet, Iterable<Object> facts,
-			GigaSpace gigaSpace, KnowledgeBaseWrapperDao knowledgeBaseWrapperDao, Map<String, Object> globals) throws LeaseDeniedException, UnknownLeaseException, RemoteException {
+		GigaSpace gigaSpace, KnowledgeBaseWrapperDao knowledgeBaseWrapperDao, Map<String, Object> globals) throws LeaseDeniedException, UnknownLeaseException, RemoteException {
 		// log.info("Start executeRules method");
 		// log.info("Read: " + ruleSet);
 		KnowledgeBaseWrapper knowledgeBaseWrapper = readRules(ruleSet, knowledgeBaseWrapperDao);
 
 		if (knowledgeBaseWrapper != null) {
-			StatelessKnowledgeSession session = knowledgeBaseWrapper
-					.getKnowledgeBase().newStatelessKnowledgeSession();
+			StatelessKieSession session = knowledgeBaseWrapper
+					.getKnowledgeBase().newStatelessKieSession();
 			TrackingWorkingMemoryEventListener listener = new TrackingWorkingMemoryEventListener();
 			session.addEventListener(listener);
 			/*

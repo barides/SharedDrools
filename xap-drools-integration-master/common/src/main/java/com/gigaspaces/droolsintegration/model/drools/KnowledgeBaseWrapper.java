@@ -1,8 +1,7 @@
 package com.gigaspaces.droolsintegration.model.drools;
 
 import java.io.Serializable;
-
-import org.drools.KnowledgeBase;
+import org.kie.api.KieBase;
 
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
@@ -16,7 +15,7 @@ public class KnowledgeBaseWrapper implements Serializable {
 
     private String id;
     private String ruleSet;
-    private KnowledgeBase knowledgeBase;
+    private KieBase knowledgeBase;
     private Integer totalKnowledgePackages;
     private Integer totalRules;
     private Integer routing;
@@ -46,11 +45,11 @@ public class KnowledgeBaseWrapper implements Serializable {
 		this.ruleSet = ruleSet;
 	}
 
-	public KnowledgeBase getKnowledgeBase() {
+	public KieBase getKnowledgeBase() {
 		return knowledgeBase;
 	}
 
-	public void setKnowledgeBase(KnowledgeBase knowledgeBase) {
+	public void setKnowledgeBase(KieBase knowledgeBase) {
 		this.knowledgeBase = knowledgeBase;
 	}
 

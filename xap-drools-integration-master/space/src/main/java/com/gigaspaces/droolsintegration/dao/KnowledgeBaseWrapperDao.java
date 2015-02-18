@@ -3,7 +3,7 @@ package com.gigaspaces.droolsintegration.dao;
 import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
-import org.drools.builder.KnowledgeBuilder;
+import org.kie.internal.builder.KnowledgeBuilder;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.context.GigaSpaceContext;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ public class KnowledgeBaseWrapperDao {
 	}
 	
 	public void addKnowledgePackages(KnowledgeBaseWrapper knowledgeBaseWrapper, KnowledgeBuilder kbuilder) {
-		knowledgeBaseWrapper.getKnowledgeBase().addKnowledgePackages(kbuilder.getKnowledgePackages());
+		knowledgeBaseWrapper.getKnowledgeBase().getKiePackages().addAll( kbuilder.getKnowledgePackages() );
 		knowledgeBaseWrapper.setTotalKnowledgePackages(knowledgeBaseWrapper.getTotalKnowledgePackages() + 1);
         knowledgeBaseWrapper.setTotalRules(knowledgeBaseWrapper.getTotalRules() + 1);
 		

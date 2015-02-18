@@ -5,31 +5,27 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.drools.event.rule.DefaultWorkingMemoryEventListener;
-import org.drools.event.rule.ObjectInsertedEvent;
-import org.drools.event.rule.ObjectRetractedEvent;
-import org.drools.event.rule.ObjectUpdatedEvent;
-import org.drools.event.rule.WorkingMemoryEvent;
-import org.drools.runtime.rule.FactHandle;
+import org.kie.api.event.rule.ObjectDeletedEvent;
+import org.kie.api.event.rule.ObjectInsertedEvent;
+import org.kie.api.event.rule.ObjectUpdatedEvent;
+import org.kie.api.event.rule.RuleRuntimeEventListener;
 
-public class TrackingWorkingMemoryEventListener extends
-		DefaultWorkingMemoryEventListener {
+public class TrackingWorkingMemoryEventListener implements RuleRuntimeEventListener {
 	private static Logger log = Logger
 			.getLogger(TrackingWorkingMemoryEventListener.class);
-	private List<WorkingMemoryEvent> allEvents = new ArrayList<WorkingMemoryEvent>();
 	private List<ObjectInsertedEvent> insertions = new ArrayList<ObjectInsertedEvent>();
-	private List<ObjectRetractedEvent> retractions = new ArrayList<ObjectRetractedEvent>();
+	private List<ObjectDeletedEvent> deletions = new ArrayList<ObjectDeletedEvent>();
 	private List<ObjectUpdatedEvent> updates = new ArrayList<ObjectUpdatedEvent>();
 	private List<Map<String, Object>> factChanges = new ArrayList<Map<String, Object>>();
-	private FactHandle handleFilter;
-	private Class<?> classFilter;
+	// private FactHandle handleFilter;
+	// private Class<?> classFilter;
 
 	/**
 	 * Void constructor sets the listener to record all working memory events
 	 * with no filtering.
 	 */
 	public TrackingWorkingMemoryEventListener() {
-		this.handleFilter = null;
+		// this.handleFilter = null;
 	}
 
 	/**
@@ -40,6 +36,7 @@ public class TrackingWorkingMemoryEventListener extends
 	 * @param handle
 	 *            The {@link FactHandle} to filter on.
 	 */
+	/*
 	public TrackingWorkingMemoryEventListener(FactHandle handle) {
 		this.handleFilter = handle;
 	}
@@ -48,55 +45,14 @@ public class TrackingWorkingMemoryEventListener extends
 		this.handleFilter = null;
 		this.classFilter = classFilter;
 	}
-
-	public void objectInserted(final ObjectInsertedEvent event) {
-		if ((handleFilter == null && classFilter == null)
-				|| event.getFactHandle() == handleFilter
-				|| event.getObject().getClass().equals(classFilter)) {
-			insertions.add(event);
-			allEvents.add(event);
-			// log.info("Insertion: " + event.getObject().toString());
-		}
-	}
-
-	public void objectRetracted(final ObjectRetractedEvent event) {
-		if ((handleFilter == null && classFilter == null)
-				|| event.getFactHandle() == handleFilter
-				|| event.getOldObject().getClass().equals(classFilter)) {
-			retractions.add(event);
-			allEvents.add(event);
-			// log.info("Retraction: " + event.getOldObject().toString());
-		}
-	}
-
-	public void objectUpdated(final ObjectUpdatedEvent event) {
-		if ((handleFilter == null && classFilter == null)
-				|| event.getFactHandle() == handleFilter
-				|| event.getObject().getClass().equals(classFilter)) {
-			updates.add(event);
-			allEvents.add(event);
-			// log.info("Update: " + event.getObject().toString());
-			/*
-			 * allEvents.add(event); Object fact = event.getObject(); try {
-			 * factChanges.add(BeanUtils.describe(fact)); } catch (Exception e)
-			 * { log.error("Unable to get object details for tracking: " +
-			 * DroolsUtil.objectDetails(fact), e); } log.trace("Update: " +
-			 * DroolsUtil.objectDetails(event.getObject())); }
-			 */
-		}
-
-	}
-
-	public List<WorkingMemoryEvent> getAllEvents() {
-		return allEvents;
-	}
-
+*/
+	
 	public List<ObjectInsertedEvent> getInsertions() {
 		return insertions;
 	}
 
-	public List<ObjectRetractedEvent> getRetractions() {
-		return retractions;
+	public List<ObjectDeletedEvent> getDeletions() {
+		return deletions;
 	}
 
 	public List<ObjectUpdatedEvent> getUpdates() {
@@ -110,7 +66,7 @@ public class TrackingWorkingMemoryEventListener extends
 	public String getPrintableSummary() {
 		return "TrackingWorkingMemoryEventListener: " + "insertions=["
 				+ insertions.size() + "], " + "retractions=["
-				+ retractions.size() + "], " + "updates=[" + updates.size()
+				+ deletions.size() + "], " + "updates=[" + updates.size()
 				+ "]";
 	}
 	/*
@@ -126,4 +82,23 @@ public class TrackingWorkingMemoryEventListener extends
 	 * DroolsUtil.objectDetails(event.getObject())); } return report.toString();
 	 * }
 	 */
+
+	@Override
+	public void objectInserted(org.kie.api.event.rule.ObjectInsertedEvent event) {
+		insertions.add(event);
+		// log.info("Insertion: " + event.getObject().toString());
+		
+	}
+
+	@Override
+	public void objectUpdated(org.kie.api.event.rule.ObjectUpdatedEvent event) {
+		updates.add(event);
+		// log.info("Updates: " + event.getObject().toString());
+	}
+
+	@Override
+	public void objectDeleted(ObjectDeletedEvent event) {
+		deletions.add(event);
+		
+	}
 }
